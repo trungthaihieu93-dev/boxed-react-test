@@ -1,16 +1,18 @@
-import { PAGE, LIMIT, SORT, SEARCH } from './constants';
+import { PAGE, LIMIT, SEARCH, SORT_BY, ORDER } from './constants';
 
 export type SortType = 'asc' | 'desc';
 
 export type QueryParams = {
   [PAGE]?: number;
   [LIMIT]?: number;
-  [SORT]?: SortType;
+  [SORT_BY]?: string;
+  [ORDER]?: SortType;
   [SEARCH]?: string;
 };
 
 export const defaultQueryParams: QueryParams = {
   page: 1,
   limit: 5,
-  sortBy: 'desc',
+  sortBy: 'id',
+  order: 'desc',
 };

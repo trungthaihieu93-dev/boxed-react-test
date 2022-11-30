@@ -49,6 +49,23 @@ export const Table = <T extends BaseType>(props: ITableProps<T>) => {
     [rows]
   );
 
+  const handleSort = useCallback(
+    (key: string) => {
+      const { key: oldKey, type: oldType } = sortTarget || {};
+
+      if (!oldKey) {
+        setSortTarget({ key, type: 'desc' });
+      } else {
+        if (key === oldKey) {
+          setSortTarget({ key, type: oldType === 'asc' ? 'desc' : 'asc' });
+        } else {
+          setSortTarget({ key, type: 'desc' });
+        }
+      }
+    },
+    [sortTarget]
+  );
+
   useEffect(() => () => clearTimeout(searchTimeout), []);
 
   useEffect(() => {
@@ -63,7 +80,13 @@ export const Table = <T extends BaseType>(props: ITableProps<T>) => {
   // Refetch
   useEffect(() => {
     setChosenRows([]);
-    fetchData({ limit, page, sortBy: 'asc', search: searchValue });
+    fetchData({
+      limit,
+      page,
+      sortBy: sortTarget?.key,
+      order: sortTarget?.type,
+      search: searchValue,
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [limit, page, sortTarget, searchValue]);
 
@@ -158,6 +181,7 @@ export const Table = <T extends BaseType>(props: ITableProps<T>) => {
                   <th
                     style={{ border: 'medium solid black', cursor: 'pointer' }}
                     key={header.key}
+                    onClick={() => handleSort(header.key)}
                   >
                     {header.title}
                   </th>
