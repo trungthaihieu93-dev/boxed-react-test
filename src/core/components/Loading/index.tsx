@@ -2,8 +2,8 @@ import React from 'react';
 
 import './styles.css';
 
-export interface ITableProps {}
+export interface ILoadingProps {}
 
-export default function Table(props: ITableProps) {
+export default function Loading(props: ILoadingProps) {
   return <div></div>;
 }
