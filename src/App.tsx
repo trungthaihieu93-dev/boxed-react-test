@@ -6,7 +6,13 @@ import { THead } from './core/components/Table/types';
 import { ITask } from './core/interfaces/tasks';
 import { getTasks } from './services/tasks';
 
-const headers: THead[] = [];
+const headers: THead[] = [
+  { dataKey: 'id', key: 'id', title: 'Id' },
+  { dataKey: 'title', key: 'title', title: 'Title' },
+  { dataKey: 'description', key: 'description', title: 'Description' },
+  { dataKey: 'createdAt', key: 'createdAt', title: 'Created At' },
+  { dataKey: 'expiredAt', key: 'expiredAt', title: 'Expired At' },
+];
 const limits: number[] = [5, 10, 15];
 
 function App() {
@@ -32,7 +38,7 @@ function App() {
       <header className="App-header">
         <h2>Welcome to Table App</h2>
       </header>
-      <body>
+      <div>
         <Table<ITask>
           headers={headers}
           rows={tasks}
@@ -40,7 +46,7 @@ function App() {
           loading={loading}
           fetchData={fetchTasks}
         />
-      </body>
+      </div>
       <footer>This is a Footer</footer>
     </div>
   );
