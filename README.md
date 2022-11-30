@@ -6,7 +6,9 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 Install Node.js and Yarn package manager
 
-[https://nodejs.org/en/download/](Node.js) [https://classic.yarnpkg.com/lang/en/docs/install/#windows-stable](Yarn)
+[https://nodejs.org/en/download/](Node.js)
+
+[https://classic.yarnpkg.com/lang/en/docs/install/#windows-stable](Yarn)
 
 Clone the repo and install dependencies
 
