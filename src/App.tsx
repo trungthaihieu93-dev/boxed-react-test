@@ -38,7 +38,7 @@ function App() {
       <header className="App-header">
         <h2>Welcome to Table App</h2>
       </header>
-      <div>
+      <div style={{ height: 700 }}>
         <Table<ITask>
           headers={headers}
           rows={tasks}
@@ -47,7 +47,6 @@ function App() {
           fetchData={fetchTasks}
         />
       </div>
-      <footer>This is a Footer</footer>
     </div>
   );
 }

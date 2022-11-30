@@ -1,11 +1,14 @@
 import React, { useEffect, useState, useCallback } from 'react';
 
-import './styles.css';
-import './hooks';
 import { THead } from './types';
 import { QueryParams } from '../../API/types';
 import { SortType } from '../../API/types';
 import { BaseType } from '../../types/base';
+
+import './styles.css';
+import './hooks';
+
+let searchTimeout: any;
 
 export type SortTarget = {
   key: string;
@@ -24,6 +27,7 @@ export const Table = <T extends BaseType>(props: ITableProps<T>) => {
   const dataKeys = headers.map((header: THead) => header.dataKey);
   const [limit, setLimit] = useState<number>(5);
   const [searchValue, setSearchValue] = useState<string>('');
+  const [tempSearchValue, setTempSearchValue] = useState<string>('');
   const [page, setPage] = useState<number>(1);
   const [sortTarget, setSortTarget] = useState<SortTarget | null>(null);
   const [chosenRows, setChosenRows] = useState<T[]>([]);
@@ -45,12 +49,23 @@ export const Table = <T extends BaseType>(props: ITableProps<T>) => {
     [rows]
   );
 
+  useEffect(() => () => clearTimeout(searchTimeout), []);
+
+  useEffect(() => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => setSearchValue(tempSearchValue), 1000);
+  }, [tempSearchValue]);
+
+  const handleSearchValue = useCallback((val: string) => {
+    setTempSearchValue(val);
+  }, []);
+
   // Refetch
   useEffect(() => {
     setChosenRows([]);
-    fetchData();
+    fetchData({ limit, page, sortBy: 'asc', search: searchValue });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchValue, limit, page, sortTarget]);
+  }, [limit, page, sortTarget, searchValue]);
 
   useEffect(() => {
     const chosenArea = document.getElementById('chosenArea');
@@ -64,44 +79,113 @@ export const Table = <T extends BaseType>(props: ITableProps<T>) => {
     }
   }, [chosenRows]);
 
-  return loading ? (
-    <span>Loading...</span>
-  ) : rows.length === 0 ? (
-    <span>No Data</span>
-  ) : (
+  return (
     <div>
-      <table
+      <div
         style={{
-          width: 800,
-          height: 500,
+          display: 'flex',
+          flexDirection: 'row',
           margin: 'auto',
-          border: 'medium solid black',
-          padding: 20,
+          width: 200,
         }}
       >
-        <tr>
-          <th></th>
-          {headers.map((header: THead) => (
-            <th style={{ border: 'medium solid black' }} key={header.key}>
-              {header.title}
-            </th>
+        <input
+          type="text"
+          placeholder="Keyword..."
+          value={tempSearchValue}
+          onChange={(e) => handleSearchValue(e.target.value)}
+        />
+        <select
+          style={{ width: 100, height: 50, marginLeft: 20 }}
+          onChange={(e) => setLimit(parseInt(e.target.value, 10))}
+        >
+          {limits.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
           ))}
-        </tr>
-        {rows.map((row: any) => (
-          <tr key={row.id}>
-            <td>
-              <input type="checkbox" onChange={(e) => handleCheck(e, row.id)} />
-            </td>
-            {dataKeys.map((key: string) => (
-              <td key={`${row.id}_${key}`}>{row[key]}</td>
-            ))}
-          </tr>
-        ))}
-      </table>
-      <div>Chosen rows</div>
-      <br />
-      <div id="chosenArea"></div>
-      <br />
+        </select>
+        <button
+          style={{ width: 100, height: 50, marginLeft: 20 }}
+          onClick={() => setPage((prevPage) => prevPage - 1)}
+          disabled={page === 1}
+        >
+          Previous
+        </button>
+        <div
+          style={{
+            width: 100,
+            height: 50,
+            marginLeft: 20,
+            textAlign: 'center',
+            lineHeight: 3,
+            verticalAlign: 'center',
+          }}
+        >
+          {page}
+        </div>
+        <button
+          style={{ width: 100, height: 50, marginLeft: 20 }}
+          onClick={() => setPage((prevPage) => prevPage + 1)}
+        >
+          {' '}
+          Next
+        </button>
+      </div>
+      <div style={{ marginTop: 30 }}>
+        {loading ? (
+          <div style={{ height: 50, width: 100, margin: 'auto' }}>
+            Loading...
+          </div>
+        ) : rows.length === 0 ? (
+          <div style={{ height: 50, width: 100, margin: 'auto' }}>
+            No data...
+          </div>
+        ) : (
+          <div>
+            <table
+              style={{
+                width: 800,
+                height: 500,
+                margin: 'auto',
+                border: 'medium solid black',
+                padding: 20,
+              }}
+            >
+              <tr>
+                <th></th>
+                {headers.map((header: THead) => (
+                  <th
+                    style={{ border: 'medium solid black', cursor: 'pointer' }}
+                    key={header.key}
+                  >
+                    {header.title}
+                  </th>
+                ))}
+              </tr>
+              {rows.map((row: any) => (
+                <tr key={row.id}>
+                  <td>
+                    <input
+                      type="checkbox"
+                      onChange={(e) => handleCheck(e, row.id)}
+                    />
+                  </td>
+                  {dataKeys.map((key: string) => (
+                    <td key={`${row.id}_${key}`}>{row[key]}</td>
+                  ))}
+                </tr>
+              ))}
+            </table>
+            <div style={{ padding: 30, width: 800, margin: 'auto' }}>
+              <b>Chosen rows</b>
+              <br />
+              <div id="chosenArea"></div>
+              <br />
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

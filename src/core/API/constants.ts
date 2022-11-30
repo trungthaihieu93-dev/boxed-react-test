@@ -2,3 +2,4 @@
 export const PAGE = 'page';
 export const LIMIT = 'limit';
 export const SORT = 'sortBy';
+export const SEARCH = 'search';
