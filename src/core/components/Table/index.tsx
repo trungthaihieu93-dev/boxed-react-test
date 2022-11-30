@@ -66,8 +66,10 @@ export const Table = <T extends BaseType>(props: ITableProps<T>) => {
     [sortTarget]
   );
 
+  // Clear timeouts
   useEffect(() => () => clearTimeout(searchTimeout), []);
 
+  // Refresh search value
   useEffect(() => {
     clearTimeout(searchTimeout);
     searchTimeout = setTimeout(() => setSearchValue(tempSearchValue), 1000);
@@ -77,7 +79,7 @@ export const Table = <T extends BaseType>(props: ITableProps<T>) => {
     setTempSearchValue(val);
   }, []);
 
-  // Refetch
+  // Refetch data
   useEffect(() => {
     setChosenRows([]);
     fetchData({
