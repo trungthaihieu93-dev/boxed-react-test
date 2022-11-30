@@ -2,6 +2,7 @@ import React from 'react';
 
 import './styles.css';
 import './hooks';
+import { THead } from './types';
 
 export interface ITableProps {}
 
