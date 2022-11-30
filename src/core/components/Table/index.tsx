@@ -6,7 +6,6 @@ import { SortType } from '../../API/types';
 import { BaseType } from '../../types/base';
 
 import './styles.css';
-import './hooks';
 
 let searchTimeout: any;
 
